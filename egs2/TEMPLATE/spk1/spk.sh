@@ -8,7 +8,7 @@ set -o pipefail
 
 log() {
     local fname=${BASH_SOURCE[1]##*/}
-        echo -e "$(date '+%Y-%m-%dT%H:%M:%S') (${fname}:${BASH_LINENO[0]}:${FUNCNAME[1]}) $*"
+    echo -e "$(date '+%Y-%m-%dT%H:%M:%S') (${fname}:${BASH_LINENO[0]}:${FUNCNAME[1]}) $*"
 }
 
 min() {
@@ -25,21 +25,21 @@ min() {
 SECONDS=0
 
 # General configuration
-stage=1               # Processes starts from the specified stage.
-stop_stage=10000      # Processes is stopped at the specified stage.
-skip_stages=          # Spicify the stage to be skipped
-skip_data_prep=false  # Skip data preparation stages.
-skip_train=false      # Skip training stages.
-skip_eval=false       # Skip decoding and evaluation stages.
-eval_valid_set=false  # Run decoding for the validation set
-ngpu=1                # The number of gpus ("0" uses cpu, otherwise use gpu).
-num_nodes=1           # The number of nodes.
-nj=32                 # The number of parallel jobs.
-gpu_inference=false   # Whether to perform gpu decoding.
-dumpdir=dump          # Directory to dump features.
-expdir=exp            # Directory to save experiments.
-python=python3        # Specify python to execute espnet commands.
-fold_length=120000    # fold_length for speech data during enhancement training.
+stage=1              # Processes starts from the specified stage.
+stop_stage=10000     # Processes is stopped at the specified stage.
+skip_stages=         # Spicify the stage to be skipped
+skip_data_prep=false # Skip data preparation stages.
+skip_train=false     # Skip training stages.
+skip_eval=false      # Skip decoding and evaluation stages.
+eval_valid_set=false # Run decoding for the validation set
+ngpu=1               # The number of gpus ("0" uses cpu, otherwise use gpu).
+num_nodes=1          # The number of nodes.
+nj=32                # The number of parallel jobs.
+gpu_inference=false  # Whether to perform gpu decoding.
+dumpdir=dump         # Directory to dump features.
+expdir=exp           # Directory to save experiments.
+python=python3       # Specify python to execute espnet commands.
+fold_length=120000   # fold_length for speech data during enhancement training.
 
 # Data preparation related
 local_data_opts= # The options given to local/data.sh
@@ -48,34 +48,35 @@ local_data_opts= # The options given to local/data.sh
 speed_perturb_factors="0.9 1.0 1.1" # perturbation factors, e.g. "0.9 1.0 1.1" (separated by space).
 
 # Feature extraction related
-feats_type=raw      # Feature type (raw, raw_copy, fbank_pitch, or extracted).
-audio_format=wav    # Audio format: wav, flac, wav.ark, flac.ark  (only in feats_type=raw).
+feats_type=raw                     # Feature type (raw, raw_copy, fbank_pitch, or extracted).
+audio_format=wav                   # Audio format: wav, flac, wav.ark, flac.ark  (only in feats_type=raw).
 multi_columns_input_wav_scp=false  # Enable multi columns mode for input wav.scp for format_wav_scp.py
 multi_columns_output_wav_scp=false # Enable multi columns mode for output wav.scp for format_wav_scp.py
-fs=16k               # Sampling rate.
-min_wav_duration=1.0  # Minimum duration in second.
-max_wav_duration=60.  # Maximum duration in second.
+fs=16k                             # Sampling rate.
+min_wav_duration=1.0               # Minimum duration in second.
+max_wav_duration=60.               # Maximum duration in second.
 
 # Speaker model related
-spk_exp=              # Specify the directory path for spk experiment.
-spk_tag=              # Suffix to the result dir for spk model training.
-spk_config=           # Config for the spk model training.
-spk_args=             # Arguments for spk model training.
-pretrained_model=     # Pretrained model to load
-ignore_init_mismatch=false      # Ignore initial mismatch
+spk_exp=                   # Specify the directory path for spk experiment.
+spk_tag=                   # Suffix to the result dir for spk model training.
+spk_config=                # Config for the spk model training.
+spk_args=                  # Arguments for spk model training.
+pretrained_model=          # Pretrained model to load
+ignore_init_mismatch=false # Ignore initial mismatch
 
 # Inference related
-inference_config=conf/decode.yaml   # Inference configuration
-inference_model=valid.eer.best.pth  # Inference model weight file
-score_norm=false      # Apply score normalization in inference.
-qmf_func=false        # Apply quality measurement based calibration in inference.
+inference_config=conf/decode.yaml  # Inference configuration
+inference_model=valid.eer.best.pth # Inference model weight file
+score_norm=false                   # Apply score normalization in inference.
+qmf_func=false                     # Apply quality measurement based calibration in inference.
 
 # [Task dependent] Set the datadir name created by local/data.sh
-train_set=       # Name of training set.
-valid_set=       # Name of validation set used for monitoring/tuning network training.
-test_sets=       # Names of test sets. Multiple items (e.g., both dev and eval sets) can be specified.
+train_set= # Name of training set.
+valid_set= # Name of validation set used for monitoring/tuning network training.
+test_sets= # Names of test sets. Multiple items (e.g., both dev and eval sets) can be specified.
 
-help_message=$(cat <<EOF
+help_message=$(
+    cat <<EOF
 Usage: $0 --train-set "<train_set_name>" --valid-set "<valid_set_name>" --test_sets "<test_set_names>"
 
 Options:
@@ -134,24 +135,24 @@ log "$0 $*"
 run_args=$(scripts/utils/print_args.sh $0 "$@")
 . utils/parse_options.sh
 
-if [ $# -ne 0  ]; then
+if [ $# -ne 0 ]; then
     log "${help_message}"
     log "Error: No positional arguments are required."
-        exit 2
+    exit 2
 fi
 
 . ./path.sh
 . ./cmd.sh
 
 # Check feature type
-if [ "${feats_type}" = raw  ]; then
+if [ "${feats_type}" = raw ]; then
     data_feats=${dumpdir}/raw
-elif [ "${feats_type}" = raw_copy  ]; then
+elif [ "${feats_type}" = raw_copy ]; then
     # raw_copy is as same as raw except for skipping the format_wav stage
     data_feats=${dumpdir}/raw_copy
-elif [ "${feats_type}" = fbank  ]; then
+elif [ "${feats_type}" = fbank ]; then
     data_feats=${dumpdir}/fbank
-elif [ "${feats_type}" = extracted  ]; then
+elif [ "${feats_type}" = extracted ]; then
     data_feats=${dumpdir}/extracted
 else
     log "${help_message}"
@@ -173,7 +174,7 @@ fi
 
 # Set directory used for training commands
 spk_stats_dir="${expdir}/spk_stats_${fs}"
-if [ -z "${spk_exp}"  ]; then
+if [ -z "${spk_exp}" ]; then
     spk_exp="${expdir}/spk_${spk_tag}"
 fi
 
@@ -185,8 +186,7 @@ fi
 skip_stages=$(echo "${skip_stages}" | tr ' ' '\n' | sort -nu | tr '\n' ' ')
 log "Skipped stages: ${skip_stages}"
 
-
-if [ ${stage} -le 1  ] && [ ${stop_stage} -ge 1  ] && ! [[ " ${skip_stages} " =~ [[:space:]]1[[:space:]]  ]]; then
+if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ] && ! [[ " ${skip_stages} " =~ [[:space:]]1[[:space:]] ]]; then
     log "Stage 1: Data preparation for train and evaluation."
     # [Task dependent] Need to create data.sh for new corpus
     local/data.sh ${local_data_opts}
@@ -252,11 +252,11 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
                 --multi-columns-output "${multi_columns_output_wav_scp}" \
                 "data/${train_set}/wav.scp" "${data_feats}/${train_set}"
 
-            echo "${feats_type}" > "${data_feats}/${train_set}/feats_type"
+            echo "${feats_type}" >"${data_feats}/${train_set}/feats_type"
             if "${multi_columns_output_wav_scp}"; then
-                echo "multi_${audio_format}" > "${data_feats}/${train_set}/audio_format"
+                echo "multi_${audio_format}" >"${data_feats}/${train_set}/audio_format"
             else
-                echo "${audio_format}" > "${data_feats}/${train_set}/audio_format"
+                echo "${audio_format}" >"${data_feats}/${train_set}/audio_format"
             fi
         fi
 
@@ -285,8 +285,8 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
                 --out_filename trial2.scp \
                 "data/${dset}/trial2.scp" "${data_feats}/${dset}"
 
-            echo "${feats_type}" > "${data_feats}/${dset}/feats_type"
-            echo "multi_${audio_format}" > "${data_feats}/${dset}/audio_format"
+            echo "${feats_type}" >"${data_feats}/${dset}/feats_type"
+            echo "multi_${audio_format}" >"${data_feats}/${dset}/audio_format"
 
         done
     elif [ "${feats_type}" = raw_copy ]; then
@@ -299,11 +299,11 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
             done
             cp data/rirs.scp ${data_feats}/rirs.scp
 
-            echo "${feats_type}" > "${data_feats}/${train_set}/feats_type"
+            echo "${feats_type}" >"${data_feats}/${train_set}/feats_type"
             if "${multi_columns_output_wav_scp}"; then
-                echo "multi_${audio_format}" > "${data_feats}/${train_set}/audio_format"
+                echo "multi_${audio_format}" >"${data_feats}/${train_set}/audio_format"
             else
-                echo "${audio_format}" > "${data_feats}/${train_set}/audio_format"
+                echo "${audio_format}" >"${data_feats}/${train_set}/audio_format"
             fi
         fi
 
@@ -315,8 +315,8 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
             cp data/${dset}/trial.scp "${data_feats}/${dset}"
             cp data/${dset}/trial2.scp "${data_feats}/${dset}"
 
-            echo "${feats_type}" > "${data_feats}/${dset}/feats_type"
-            echo "multi_${audio_format}" > "${data_feats}/${dset}/audio_format"
+            echo "${feats_type}" >"${data_feats}/${dset}/feats_type"
+            echo "multi_${audio_format}" >"${data_feats}/${dset}/audio_format"
 
         done
 
@@ -334,7 +334,7 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
     _spk_train_dir="${data_feats}/${train_set}"
     _spk_valid_dir="${data_feats}/${valid_set}"
 
-    if [ -n "${spk_config}"  ]; then
+    if [ -n "${spk_config}" ]; then
         # To generate the config file: e.g.
         #   % python3 -m espnet2.bin.spk_train --print_config --optim adam
         _opts+="--config ${spk_config} "
@@ -369,7 +369,9 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
 
     # 2. Generate run.sh
     log "Generate '${spk_stats_dir}/run.sh'. You can resume the process from stage 3 using this script"
-    mkdir -p "${spk_stats_dir}"; echo "${run_args} -- stage3 \"\$@\"; exit \$?" > "${spk_stats_dir}/run.sh"; chmod +x "${spk_stats_dir}/run.sh"
+    mkdir -p "${spk_stats_dir}"
+    echo "${run_args} -- stage3 \"\$@\"; exit \$?" >"${spk_stats_dir}/run.sh"
+    chmod +x "${spk_stats_dir}/run.sh"
 
     # 3. Submit jobs
     log "Speaker collect-stats started... log: '${_logdir}/stats.*.log'"
@@ -377,16 +379,19 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
     # shellcheck disable=SC2046,SC2086
     ${train_cmd} JOB=1:"${_nj}" "${_logdir}"/stats.JOB.log \
         ${python} -m espnet2.bin.spk_train \
-            --collect_stats true \
-            --use_preprocessor false \
-            --train_data_path_and_name_and_type ${_spk_train_dir}/wav.scp,speech,${_type} \
-            --valid_data_path_and_name_and_type ${_spk_valid_dir}/trial.scp,speech,${_type} \
-            --train_shape_file "${_logdir}/train.JOB.scp" \
-            --valid_shape_file "${_logdir}/valid.JOB.scp" \
-            --spk2utt ${_spk_train_dir}/spk2utt \
-            --spk_num $(wc -l ${_spk_train_dir}/spk2utt | cut -f1 -d" ") \
-            --output_dir "${_logdir}/stats.JOB" \
-            ${_opts} ${spk_args} || { cat $(grep -l -i error "${_logdir}"/stats.*.log) ; exit 1;  }
+        --collect_stats true \
+        --use_preprocessor false \
+        --train_data_path_and_name_and_type ${_spk_train_dir}/wav.scp,speech,${_type} \
+        --valid_data_path_and_name_and_type ${_spk_valid_dir}/trial.scp,speech,${_type} \
+        --train_shape_file "${_logdir}/train.JOB.scp" \
+        --valid_shape_file "${_logdir}/valid.JOB.scp" \
+        --spk2utt ${_spk_train_dir}/spk2utt \
+        --spk_num $(wc -l ${_spk_train_dir}/spk2utt | cut -f1 -d" ") \
+        --output_dir "${_logdir}/stats.JOB" \
+        ${_opts} ${spk_args} || {
+        cat $(grep -l -i error "${_logdir}"/stats.*.log)
+        exit 1
+    }
 
     # 4. Aggregate shape files
     _opts=
@@ -405,14 +410,14 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
     _spk_train_dir="${data_feats}/${train_set}"
     _spk_valid_dir="${data_feats}/${valid_set}"
     _opts=
-    if [ -n "${spk_config}"  ]; then
+    if [ -n "${spk_config}" ]; then
         # To generate the config file: e.g.
         #   % python3 -m espnet2.bin.spk_train --print_config --optim adam
         _opts+="--config ${spk_config} "
     fi
 
     log "Spk training started... log: '${spk_exp}/train.log'"
-    if echo "${cuda_cmd}" | grep -e queue.pl -e queue-freegpu.pl &> /dev/null; then
+    if echo "${cuda_cmd}" | grep -e queue.pl -e queue-freegpu.pl &>/dev/null; then
         # SGE can't include "/" in a job name
         jobname="$(basename ${spk_exp})"
     else
@@ -427,25 +432,24 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
         --init_file_prefix ${spk_exp}/.dist_init_ \
         --multiprocessing_distributed true -- \
         ${python} -m espnet2.bin.spk_train \
-            --use_preprocessor true \
-            --resume true \
-            ${pretrained_model:+--init_param $pretrained_model} \
-            --ignore_init_mismatch ${ignore_init_mismatch} \
-            --output_dir ${spk_exp} \
-            --train_data_path_and_name_and_type ${_spk_train_dir}/wav.scp,speech,sound \
-            --train_data_path_and_name_and_type ${_spk_train_dir}/utt2spk,spk_labels,text \
-            --train_shape_file ${spk_stats_dir}/train/speech_shape \
-            --valid_data_path_and_name_and_type ${_spk_valid_dir}/trial.scp,speech,sound \
-            --valid_data_path_and_name_and_type ${_spk_valid_dir}/trial2.scp,speech2,sound \
-            --valid_data_path_and_name_and_type ${_spk_valid_dir}/trial_label,spk_labels,text \
-            --spk2utt ${_spk_train_dir}/spk2utt \
-            --spk_num $(wc -l ${_spk_train_dir}/spk2utt | cut -f1 -d" ") \
-            --fold_length ${fold_length} \
-            --valid_shape_file ${spk_stats_dir}/valid/speech_shape \
-            --output_dir "${spk_exp}" \
-            ${_opts} ${spk_args}
+        --use_preprocessor true \
+        --resume true \
+        ${pretrained_model:+--init_param $pretrained_model} \
+        --ignore_init_mismatch ${ignore_init_mismatch} \
+        --output_dir ${spk_exp} \
+        --train_data_path_and_name_and_type ${_spk_train_dir}/wav.scp,speech,sound \
+        --train_data_path_and_name_and_type ${_spk_train_dir}/utt2spk,spk_labels,text \
+        --train_shape_file ${spk_stats_dir}/train/speech_shape \
+        --valid_data_path_and_name_and_type ${_spk_valid_dir}/trial.scp,speech,sound \
+        --valid_data_path_and_name_and_type ${_spk_valid_dir}/trial2.scp,speech2,sound \
+        --valid_data_path_and_name_and_type ${_spk_valid_dir}/trial_label,spk_labels,text \
+        --spk2utt ${_spk_train_dir}/spk2utt \
+        --spk_num $(wc -l ${_spk_train_dir}/spk2utt | cut -f1 -d" ") \
+        --fold_length ${fold_length} \
+        --valid_shape_file ${spk_stats_dir}/valid/speech_shape \
+        --output_dir "${spk_exp}" \
+        ${_opts} ${spk_args}
 fi
-
 
 if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
     log "Stage 6: Speaker embedding extraction."
@@ -453,7 +457,7 @@ if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
     infer_exp="${spk_exp}/inference"
     _inference_dir=${data_feats}/${test_sets}
     log "Extracting speaker embeddings for inference... log: '${infer_exp}/spk_embed_extraction.log'"
-    if echo "${cuda_cmd}" | grep -e queue.pl -e queue-freegpu.pl &> /dev/null; then
+    if echo "${cuda_cmd}" | grep -e queue.pl -e queue-freegpu.pl &>/dev/null; then
         # SGE can't include "/" in a job name
         jobname="$(basename ${infer_exp})"
     else
@@ -468,22 +472,22 @@ if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
         --init_file_prefix ${spk_exp}/.dist_init_ \
         --multiprocessing_distributed true -- \
         ${python} -m espnet2.bin.spk_embed_extract \
-            --use_preprocessor true \
-            --output_dir ${infer_exp} \
-            --data_path_and_name_and_type ${_inference_dir}/trial.scp,speech,sound \
-            --data_path_and_name_and_type ${_inference_dir}/trial2.scp,speech2,sound \
-            --data_path_and_name_and_type ${_inference_dir}/trial_label,spk_labels,text \
-            --shape_file ${spk_stats_dir}/valid/speech_shape \
-            --fold_length ${fold_length} \
-            --config ${inference_config} \
-            --spk_train_config "${spk_exp}/config.yaml" \
-            --spk_model_file "${spk_exp}"/${inference_model} \
-            ${spk_args}
+        --use_preprocessor true \
+        --output_dir ${infer_exp} \
+        --data_path_and_name_and_type ${_inference_dir}/trial.scp,speech,sound \
+        --data_path_and_name_and_type ${_inference_dir}/trial2.scp,speech2,sound \
+        --data_path_and_name_and_type ${_inference_dir}/trial_label,spk_labels,text \
+        --shape_file ${spk_stats_dir}/valid/speech_shape \
+        --fold_length ${fold_length} \
+        --config ${inference_config} \
+        --spk_train_config "${spk_exp}/config.yaml" \
+        --spk_model_file "${spk_exp}"/${inference_model} \
+        ${spk_args}
 
     # extract embeddings for cohort set
-    if [ "$score_norm" = true  ] || [ "$qmf_func" = true  ]; then
+    if [ "$score_norm" = true ] || [ "$qmf_func" = true ]; then
         _spk_train_dir="${data_feats}/${train_set}"
-        if [ ! -e "${_spk_train_dir}/cohort.scp"  ]; then
+        if [ ! -e "${_spk_train_dir}/cohort.scp" ]; then
             ${python} pyscripts/utils/generate_cohort_list.py ${_spk_train_dir}/spk2utt ${_spk_train_dir}/wav.scp ${_spk_train_dir} ${inference_config} ${fs}
         fi
         ${python} -m espnet2.bin.launch \
@@ -494,24 +498,24 @@ if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
             --init_file_prefix ${spk_exp}/.dist_init_ \
             --multiprocessing_distributed true -- \
             ${python} -m espnet2.bin.spk_embed_extract \
-                --use_preprocessor true \
-                --output_dir ${infer_exp} \
-                --data_path_and_name_and_type ${_spk_train_dir}/cohort.scp,speech,sound \
-                --data_path_and_name_and_type ${_spk_train_dir}/cohort2.scp,speech2,sound \
-                --data_path_and_name_and_type ${_spk_train_dir}/cohort_label,spk_labels,text \
-                --shape_file ${_spk_train_dir}/cohort_speech_shape \
-                --fold_length ${fold_length} \
-                --config ${inference_config} \
-                --spk_train_config "${spk_exp}/config.yaml" \
-                --spk_model_file "${spk_exp}"/${inference_model} \
-                --average_embd "true" \
-                ${spk_args}
+            --use_preprocessor true \
+            --output_dir ${infer_exp} \
+            --data_path_and_name_and_type ${_spk_train_dir}/cohort.scp,speech,sound \
+            --data_path_and_name_and_type ${_spk_train_dir}/cohort2.scp,speech2,sound \
+            --data_path_and_name_and_type ${_spk_train_dir}/cohort_label,spk_labels,text \
+            --shape_file ${_spk_train_dir}/cohort_speech_shape \
+            --fold_length ${fold_length} \
+            --config ${inference_config} \
+            --spk_train_config "${spk_exp}/config.yaml" \
+            --spk_model_file "${spk_exp}"/${inference_model} \
+            --average_embd "true" \
+            ${spk_args}
     fi
 
     # extract embeddings for qmf train set
     if "$qmf_func"; then
         _spk_train_dir="${data_feats}/${train_set}"
-        if [ ! -e "${_spk_train_dir}/qmf_train.scp"  ]; then
+        if [ ! -e "${_spk_train_dir}/qmf_train.scp" ]; then
             ${python} pyscripts/utils/generate_qmf_train_list.py ${_spk_train_dir}/spk2utt ${_spk_train_dir}/wav.scp ${_spk_train_dir} ${inference_config} ${_spk_train_dir}/utt2spk ${_spk_train_dir}/cohort_label ${fs}
             mkdir ${infer_exp}/qmf
         fi
@@ -523,17 +527,17 @@ if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
             --init_file_prefix ${spk_exp}/.dist_init_ \
             --multiprocessing_distributed true -- \
             ${python} -m espnet2.bin.spk_embed_extract \
-                --use_preprocessor true \
-                --output_dir ${infer_exp}/qmf \
-                --data_path_and_name_and_type ${_spk_train_dir}/qmf_train.scp,speech,sound \
-                --data_path_and_name_and_type ${_spk_train_dir}/qmf_train2.scp,speech2,sound \
-                --data_path_and_name_and_type ${_spk_train_dir}/qmf_train_label,spk_labels,text \
-                --shape_file ${_spk_train_dir}/qmf_train_speech_shape \
-                --fold_length ${fold_length} \
-                --config ${inference_config} \
-                --spk_train_config "${spk_exp}/config.yaml" \
-                --spk_model_file "${spk_exp}"/${inference_model} \
-                ${spk_args}
+            --use_preprocessor true \
+            --output_dir ${infer_exp}/qmf \
+            --data_path_and_name_and_type ${_spk_train_dir}/qmf_train.scp,speech,sound \
+            --data_path_and_name_and_type ${_spk_train_dir}/qmf_train2.scp,speech2,sound \
+            --data_path_and_name_and_type ${_spk_train_dir}/qmf_train_label,spk_labels,text \
+            --shape_file ${_spk_train_dir}/qmf_train_speech_shape \
+            --fold_length ${fold_length} \
+            --config ${inference_config} \
+            --spk_train_config "${spk_exp}/config.yaml" \
+            --spk_model_file "${spk_exp}"/${inference_model} \
+            ${spk_args}
     fi
 fi
 
@@ -597,7 +601,9 @@ if [ ${stage} -le 8 ] && [ ${stop_stage} -ge 8 ]; then
     log "calculate score with ${score_dir}"
     ${python} pyscripts/utils/calculate_eer_mindcf.py ${score_dir} ${infer_exp}/${test_sets}_metrics
 
-    cat $(cat ${infer_exp}/${test_sets}_metrics)
+    # Show results in Markdown syntax
+    ${python} scripts/utils/show_spk_result.py "${infer_exp}/${test_sets}_metrics" "${spk_exp}"/RESULTS.md $(echo ${spk_config} | cut -d'.' -f1)
+    cat "${spk_exp}"/RESULTS.md
 fi
 
 #TODO (Jee-weon): add model upload and result generation stages.
