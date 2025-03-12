@@ -64,7 +64,7 @@ iterator_type: category
 valid_iterator_type: sequence
 shuffle_within_batch: False
 log_interval: 100
-batch_size: 48
+batch_size: 512
 valid_batch_size: 40
 use_amp: True
 keep_nbest_models: 3
@@ -90,3 +90,8 @@ scheduler_conf:
   min_lr: 0.000005
   warmup_steps: 1000
   gamma: 0.75
+
+# wandb
+use_wandb: true
+wandb_project: rawnet3_hooktheory
+wandb_name: finetune
