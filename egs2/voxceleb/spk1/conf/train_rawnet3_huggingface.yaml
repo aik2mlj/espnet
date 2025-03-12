@@ -1,0 +1,84 @@
+batch_size: 512
+best_model_criterion:
+- - valid
+  - eer
+  - min
+cudnn_benchmark: true
+cudnn_deterministic: false
+drop_last_iter: true
+encoder: rawnet3
+encoder_conf:
+  model_scale: 8
+  ndim: 1024
+  output_size: 1536
+frontend: asteroid_frontend
+frontend_conf:
+  log_term: 1.0e-06
+  preemph_coef: 0.97
+  sinc_filters: 256
+  sinc_kernel_size: 251
+  sinc_stride: 16
+grad_clip: 9999
+iterator_type: category
+keep_nbest_models: 3
+log_interval: 100
+loss: aamsoftmax_sc_topk
+loss_conf:
+  K: 3
+  k_top: 5
+  margin: 0.3
+  mp: 0.06
+  scale: 30
+max_epoch: 40
+model_conf:
+  extract_feats_in_collect_stats: false
+num_att_plot: 0
+num_workers: 0
+optim: adam
+optim_conf:
+  amsgrad: false
+  lr: 0.001
+  weight_decay: 5.0e-05
+pooling: chn_attn_stat
+preprocessor: spk
+preprocessor_conf:
+  noise_apply_prob: 0.5
+  noise_info:
+  - - 1.0
+    - dump/raw/musan_speech.scp
+    - - 4
+      - 7
+    - - 13
+      - 20
+  - - 1.0
+    - dump/raw/musan_noise.scp
+    - - 1
+      - 1
+    - - 0
+      - 15
+  - - 1.0
+    - dump/raw/musan_music.scp
+    - - 1
+      - 1
+    - - 5
+      - 15
+  num_eval: 5
+  rir_apply_prob: 0.5
+  rir_scp: dump/raw/rirs.scp
+  sample_rate: 16000
+  target_duration: 3.0
+projector: rawnet3
+projector_conf:
+  output_size: 192
+scheduler: cosineannealingwarmuprestarts
+scheduler_conf:
+  cycle_mult: 1.0
+  first_cycle_steps: 71280
+  gamma: 0.75
+  max_lr: 0.001
+  min_lr: 5.0e-06
+  warmup_steps: 1000
+shuffle_within_batch: false
+use_amp: true
+valid_batch_size: 40
+valid_iterator_type: sequence
