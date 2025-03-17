@@ -75,7 +75,7 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
     mkdir -p ${trg_dir}/hooktheory_test
     mkdir -p ${trg_dir}/hooktheory_dev
     python local/data_prep.py --src "${data_dir_prefix}/hooktheory/test" --dst "${trg_dir}/hooktheory_test"
-    python local/data_prep.py --src "${data_dir_prefix}/hooktheory/dev" --dst "${trg_dir}/hooktheory_dev"
+    python local/data_prep.py --src "${data_dir_prefix}/hooktheory/train" --dst "${trg_dir}/hooktheory_dev"
 
     for f in wav.scp utt2spk spk2utt; do
         sort ${trg_dir}/hooktheory_test/${f} -o ${trg_dir}/hooktheory_test/${f}
@@ -83,8 +83,7 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
     done
 
     # make test trial compatible with ESPnet.
-    # TODO: veri_test2.txt should be provided by siqi
-    python local/convert_trial.py --trial ${data_dir_prefix}/veri_test2.txt --scp ${trg_dir}/hooktheory_test/wav.scp --out ${trg_dir}/hooktheory_test
+    python local/convert_trial.py --trial ${data_dir_prefix}/test_pairs.txt --scp ${trg_dir}/hooktheory_test/wav.scp --out ${trg_dir}/hooktheory_test
 
     log "Stage 4, DONE."
 
