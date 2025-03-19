@@ -20,16 +20,17 @@ For the proprietary dataset of
 - Place the content in `for_espnet/audio_16k` in the google cloud bucket under `egs2/hooktheory/hooktheory/`.
 - You may want to change some parameters at `egs2/hooktheory/spk1/conf/train_rawnet3.yaml` (e.g., `batch_size`, `wandb` settings).
 - Download the pre-trained RawNet3 checkpoint from [HuggingFace](https://huggingface.co/espnet/voxcelebs12_rawnet3)
-```shell
-cd egs2/hooktheory/spk1
-mkdir pretrained && cd pretrained
-# clone the huggingface repo and put `40epoch.pth` here
-```
-- Run the following command to start the pipeline. Notice that the stored `loss.weight` values in the checkpoint are discarded since the last classification layer is different given a different dataset.
-```shell
-cd egs2/hooktheory/spk1
-./run.sh --pretrained_model exp/huggingface_sp/40epoch.pth:::loss.weight
-```
-Please take a look at `spk.sh` to get a sense of each stage in the pipeline. You may also specify the stage to start from by adding `--stage N` to the command, and the last stage by adding `--stop_stage N`.
+    ```shell
+    cd egs2/hooktheory/spk1
+    mkdir pretrained && cd pretrained
+    # clone the huggingface repo and put `40epoch.pth` here
+    ```
+- Run the following command to start the pipeline. Notice that the stored `loss.weight` values in the checkpoint are discarded since the last classification layer is different given a different number of speaker/singer classes.
+    ```shell
+    cd egs2/hooktheory/spk1
+    ./run.sh --pretrained_model pretrained/40epoch.pth:::loss.weight
+    ```
+    - Please take a look at `spk.sh` to get a sense of each stage in the pipeline. You may also specify the stage to start from by adding `--stage N` to the command, the last stage by adding `--stop_stage N`, and the stages to skip by adding `--skip_stages=A B`.
+    - During stage 1 (data preparation), the script will download [Musan](https://www.openslr.org/17/) and [RIR_NOISES](https://www.openslr.org/28/) for augmentation. (See `egs2/hooktheory/spk1/local/data.sh`). You may need to manually copy the `*.scp` files stored under `egs2/hooktheory/` to `egs2/hooktheory/spk1/data/` in order to proceed in stage 4.
 - Alternatively, you may want to train the model from scratch. In this case, you can remove the `--pretrained_model` argument from the command above.
 
