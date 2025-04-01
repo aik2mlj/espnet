@@ -18,9 +18,18 @@ from functools import partial
 
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
+from tqdm import tqdm
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("metamidi_split_on_silence.log"),
+        # Uncomment below if you want to keep console logging too
+        # logging.StreamHandler()
+    ],
+)
 logger = logging.getLogger(__name__)
 
 
@@ -68,7 +77,8 @@ def process_audio_files(input_dir: str, output_dir: str, num_threads):
     file_paths = []
     for root, _, files in os.walk(input_dir):
         for file in files:
-            file_paths.append(os.path.join(root, file))
+            if file.lower().endswith(".wav"):
+                file_paths.append(os.path.join(root, file))
 
     # Process files in parallel
     # with concurrent.futures.ProcessPoolExecutor() as executor:
@@ -85,9 +95,16 @@ def process_audio_files(input_dir: str, output_dir: str, num_threads):
     num_cores = multiprocessing.cpu_count()
     logger.info(f"Using {num_cores} CPU cores for processing.")
 
-    # Create a pool of workers and map the filepaths
+    # Create pool and process with tqdm progress bar
     with multiprocessing.Pool(processes=num_cores) as pool:
-        pool.map(worker_func, file_paths)
+        list(
+            tqdm(
+                pool.imap(worker_func, file_paths),
+                total=len(file_paths),
+                desc="Processing files",
+                unit="file",
+            )
+        )
 
 
 def parse_arguments():
