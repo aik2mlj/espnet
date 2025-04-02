@@ -1,0 +1,13 @@
+# Ignore all files and directories
+/*
+
+# Unignore the .gitignore file itself
+!.gitignore
+
+# Unignore the 'spk1' directory and its contents
+!spk1/
+!spk1/**
+spk1/data/
+spk1/downloads/
+spk1/dump/
+spk1/exp/
