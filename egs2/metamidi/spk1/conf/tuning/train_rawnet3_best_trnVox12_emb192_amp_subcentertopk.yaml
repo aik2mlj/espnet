@@ -14,9 +14,9 @@ frontend_conf:
 # Encoder
 encoder: rawnet3
 encoder_conf:
-  model_scale: 8
-  ndim: 1024
-  output_size: 1536
+  model_scale: 12
+  ndim: 1536
+  output_size: 2048
 
 # Pooling
 pooling: chn_attn_stat
@@ -54,7 +54,7 @@ loss_conf:
   k_top: 5
 
 # Training related
-max_epoch: 100
+max_epoch: 200
 num_att_plot: 0
 num_workers: 12
 cudnn_deterministic: False
@@ -64,7 +64,7 @@ iterator_type: category
 valid_iterator_type: sequence
 shuffle_within_batch: False
 log_interval: 100
-batch_size: 256
+batch_size: 512
 valid_batch_size: 40
 use_amp: True
 keep_nbest_models: 3
@@ -78,10 +78,10 @@ best_model_criterion:
 optim: adamw  # adam_W
 optim_conf:
   # betas=(0.9, 0.999) too aggressive, change to betas=(0.9, 0.95)
-  betas:
-  - 0.9
-  - 0.95
-  lr: 0.001
+  # betas:
+  # - 0.9
+  # - 0.95
+  lr: 0.002
   weight_decay: 0.00005
   amsgrad: False
 
@@ -91,14 +91,14 @@ optim_conf:
 scheduler: CosineAnnealingWarmupRestarts
 scheduler_conf:
   # first_cycle_steps: 71280 # equal to 10 epochs in voxceleb
-  first_cycle_steps: 383200 # equal to 100 epochs here (whole training)
+  first_cycle_steps: 766400 # equal to 200 epochs here (whole training)
   cycle_mult: 1.0
-  max_lr: 0.001
-  min_lr: 0.0001  # 0.0001
+  max_lr: 0.002
+  min_lr: 0.0002  # 0.0001
   warmup_steps: 1000
   gamma: 0.75  # does not effect if just one circle
 
 # wandb
 use_wandb: true
 wandb_project: rawnet3_metamidi
-wandb_name: train_john
+wandb_name: train_2gpu_bs512_bigger
