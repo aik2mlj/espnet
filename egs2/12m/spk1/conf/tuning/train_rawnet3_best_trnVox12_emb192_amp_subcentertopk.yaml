@@ -14,9 +14,9 @@ frontend_conf:
 # Encoder
 encoder: rawnet3
 encoder_conf:
-  model_scale: 12
-  ndim: 1536
-  output_size: 2048
+  model_scale: 8
+  ndim: 1024
+  output_size: 1536
 
 # Pooling
 pooling: chn_attn_stat
@@ -56,7 +56,7 @@ loss_conf:
 # Training related
 max_epoch: 200
 num_att_plot: 0
-num_workers: 12
+num_workers: 24
 cudnn_deterministic: False
 cudnn_benchmark: True
 drop_last_iter: True
@@ -81,7 +81,7 @@ optim_conf:
   # betas:
   # - 0.9
   # - 0.95
-  lr: 0.002
+  lr: 0.001
   weight_decay: 0.00005
   amsgrad: False
 
@@ -93,12 +93,12 @@ scheduler_conf:
   # first_cycle_steps: 71280 # equal to 10 epochs in voxceleb
   first_cycle_steps: 766400 # equal to 200 epochs here (whole training)
   cycle_mult: 1.0
-  max_lr: 0.002
-  min_lr: 0.0002  # 0.0001
+  max_lr: 0.001
+  min_lr: 0.0001  # 0.0001
   warmup_steps: 1000
   gamma: 0.75  # does not effect if just one circle
 
 # wandb
 use_wandb: true
-wandb_project: rawnet3_metamidi
-wandb_name: train_2gpu_bs512_bigger
+wandb_project: rawnet3_12m
+wandb_name: train_2gpu_bs512
