@@ -62,7 +62,9 @@ def process_single_file(input_filepath, input_dir, output_dir):
 
         # Filter segments shorter than 3 seconds (3000 ms)
         valid_segments = [seg for seg in segments if len(seg) >= 3000]
-        logger.info(f"Extracted {len(valid_segments)} valid segments (>=3s) from {input_filepath}")
+        logger.info(
+            f"Extracted {len(valid_segments)} valid segments (>=3s) from {input_filepath}"
+        )
 
         for idx, segment in enumerate(valid_segments, start=1):
             out_filename = f"{idx:05d}.wav"
@@ -89,7 +91,9 @@ def process_audio_files(input_dir: str, output_dir: str, num_threads):
     #     )  # chunksize for better load balancing
 
     # Create a partial function with fixed input_dir and output_dir
-    worker_func = partial(process_single_file, input_dir=input_dir, output_dir=output_dir)
+    worker_func = partial(
+        process_single_file, input_dir=input_dir, output_dir=output_dir
+    )
 
     # Determine the number of available CPU cores
     num_cores = multiprocessing.cpu_count()
@@ -112,7 +116,10 @@ def parse_arguments():
         description="Detect voice segments using Silero VAD and write segments to disk."
     )
     parser.add_argument(
-        "--input_dir", type=str, required=True, help="Path to input directory with audio files."
+        "--input_dir",
+        type=str,
+        required=True,
+        help="Path to input directory with audio files.",
     )
     parser.add_argument(
         "--output_dir",
@@ -121,11 +128,16 @@ def parse_arguments():
         help="Path to output directory for segmented audio.",
     )
     parser.add_argument(
-        "--num_threads", type=int, default=4, help="Number of threads to use for processing"
+        "--num_threads",
+        type=int,
+        default=4,
+        help="Number of threads to use for processing",
     )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_arguments()
-    process_audio_files(args.input_dir, args.output_dir, num_threads=int(args.num_threads))
+    process_audio_files(
+        args.input_dir, args.output_dir, num_threads=int(args.num_threads)
+    )

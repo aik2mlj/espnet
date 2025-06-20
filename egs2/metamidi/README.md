@@ -1,0 +1,21 @@
+Here is the complete dataset preprocessing pipeline. All the scripts are located under `spk1/local/`.
+
+- Downsample to 16khz (`gs://metamidi-complete/metamidi_demucs_stems` ⇒ `audio-16k/`)
+    - `downsample_redirect.py`
+    - 695G, 14098 singers, 110543 songs
+- Deduplication (case-insensitive for singers and songs) ⇒ `deduplicated/`
+    - `merge_singers_case_insensitive.py`
+    - 474G, 13852 singers, 74652 songs
+- Remove classical content (non-singing) ⇒ `dedup_singing/`
+    - why need this when we already have singing activity detection? Classical pieces may contain singing as well, but the singer is definitely not the provided artist. This will degrade the training.
+    - `jsonl_dataset_coverage.py` for examining the coverage of the scraped genre info in `MMD_scraped_genre.jsonl`
+        - covered by jsonl: 71214 songs (95.39%)
+    - `genre_distribution.py` for examining the distribution of the scraped genres. Also highlighted classical content (a list of classical genres is provided in the script).
+    - `merge_singers_filter_genres.py`  ⇒ `dedup_singing/` where songs of these classical genres are removed.
+        - 405G, 9808 singers, 59101 songs (checked all files >10kb)
+        - 5100 singers w/ 1 file, 2529 w/ 2-4, 2179 w/ 4+
+        - 955 singers in the test set
+- Singing activity detection ⇒ `dedup_singing_sad/`
+    - `metamidi_split_on_silence.py`: actually using `split_on_silence` instead of `silero_vad`.
+    - `remove_empty.py` remove empty singer/song directory after SAD.
+    - 269G, 9558 singers, 57365 songs

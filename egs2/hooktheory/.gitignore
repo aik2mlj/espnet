@@ -3,6 +3,7 @@
 
 # Unignore the .gitignore file itself
 !.gitignore
+!README.md
 
 # Unignore the 'spk1' directory and its contents
 !spk1/

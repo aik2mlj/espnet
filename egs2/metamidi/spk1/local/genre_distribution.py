@@ -3,7 +3,7 @@ import collections
 import matplotlib.pyplot as plt
 
 # Change this to your JSONL file path
-filename = "./metamidi_MMD_scraped_genre.jsonl"
+filename = "./MMD_scraped_genre.jsonl"
 
 # Counter to keep track of genre counts
 genre_counter = collections.Counter()
