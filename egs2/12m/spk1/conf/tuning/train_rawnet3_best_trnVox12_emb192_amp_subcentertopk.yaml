@@ -92,7 +92,7 @@ scheduler: CosineAnnealingWarmupRestarts
 scheduler_conf:
   # first_cycle_steps: 71280 # equal to 10 epochs in voxceleb
   # first_cycle_steps: 766400 # equal to 200 epochs in metamidi
-  first_cycle_steps: 1220000 # equal to 100 epochs in 12m
+  first_cycle_steps: 366000 # equal to 60 epochs in 12m
   cycle_mult: 1.0
   max_lr: 0.002
   min_lr: 0.0002  # 0.0001
@@ -102,4 +102,4 @@ scheduler_conf:
 # wandb
 use_wandb: true
 wandb_project: rawnet3_12m
-wandb_name: train_4gpu_bs1024_2
+wandb_name: train_4gpu_bs1024_60epoch
