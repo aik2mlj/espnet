@@ -46,6 +46,7 @@ For each dataset configuration, you may want to change the parameters in `<base_
   ./run.sh  --stop_stage 4  # run the pipeline up to stage 4
   ./run.sh --stage 5  # once successful, continue the pipeline on stage 5
   ```
+- For multi-GPU training, simply add the `--ngpu <num of GPUs>` argument to the command.
 
 For the proprietary dataset of
 
