@@ -31,7 +31,7 @@ preprocessor: spk
 preprocessor_conf:
   target_duration: 3.0  # seconds
   sample_rate: 16000
-  num_eval: 5
+  num_eval: 3
   noise_apply_prob: 0.5
   noise_info:
   - [1.0, 'dump/raw/musan_speech.scp', [4, 7], [13, 20]]
@@ -56,7 +56,7 @@ loss_conf:
 # Training related
 max_epoch: 200
 num_att_plot: 0
-num_workers: 24
+num_workers: 15
 cudnn_deterministic: False
 cudnn_benchmark: True
 drop_last_iter: True
@@ -64,7 +64,7 @@ iterator_type: category
 valid_iterator_type: sequence
 shuffle_within_batch: False
 log_interval: 100
-batch_size: 512
+batch_size: 1024
 valid_batch_size: 40
 use_amp: True
 keep_nbest_models: 3
@@ -81,7 +81,7 @@ optim_conf:
   # betas:
   # - 0.9
   # - 0.95
-  lr: 0.001
+  lr: 0.002
   weight_decay: 0.00005
   amsgrad: False
 
@@ -91,14 +91,15 @@ optim_conf:
 scheduler: CosineAnnealingWarmupRestarts
 scheduler_conf:
   # first_cycle_steps: 71280 # equal to 10 epochs in voxceleb
-  first_cycle_steps: 766400 # equal to 200 epochs here (whole training)
+  # first_cycle_steps: 766400 # equal to 200 epochs in metamidi
+  first_cycle_steps: 1220000 # equal to 100 epochs in 12m
   cycle_mult: 1.0
-  max_lr: 0.001
-  min_lr: 0.0001  # 0.0001
+  max_lr: 0.002
+  min_lr: 0.0002  # 0.0001
   warmup_steps: 1000
   gamma: 0.75  # does not effect if just one circle
 
 # wandb
 use_wandb: true
 wandb_project: rawnet3_12m
-wandb_name: train_2gpu_bs512
+wandb_name: train_4gpu_bs1024_2
