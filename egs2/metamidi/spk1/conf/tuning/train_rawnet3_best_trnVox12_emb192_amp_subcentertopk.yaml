@@ -1,6 +1,12 @@
 # RawNet3 reproduce recipe configuration.
-# Requires approx. 40GRAM per GPU when run with 2GPUs
-# or 20GRAM when run with 4GPUs.
+# The current training:
+
+# 2 A100 40G GPUs, `batch_size`=512, `lr=2e-3 ~ 2e-4`
+# Original model size
+
+# Total Number of model parameters: 30.95 M
+# Number of trainable parameters: 30.95 M (100.0%)
+# Size: 123.79 MB
 
 # Frontend
 frontend: asteroid_frontend
@@ -14,9 +20,9 @@ frontend_conf:
 # Encoder
 encoder: rawnet3
 encoder_conf:
-  model_scale: 12
-  ndim: 1536
-  output_size: 2048
+  model_scale: 8
+  ndim: 1024
+  output_size: 1536
 
 # Pooling
 pooling: chn_attn_stat
@@ -101,4 +107,4 @@ scheduler_conf:
 # wandb
 use_wandb: true
 wandb_project: rawnet3_metamidi
-wandb_name: train_2gpu_bs512_bigger
+wandb_name: train_2gpu_bs512

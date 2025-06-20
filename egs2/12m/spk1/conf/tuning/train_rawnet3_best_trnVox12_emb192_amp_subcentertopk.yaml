@@ -1,6 +1,13 @@
 # RawNet3 reproduce recipe configuration.
-# Requires approx. 40GRAM per GPU when run with 2GPUs
-# or 20GRAM when run with 4GPUs.
+# The current training:
+
+# 4 A100 40G GPUs, `batch_size`=1024, `lr=2e-3 ~ 2e-4`
+# ~4.5 days, 61 epochs
+# Original model size
+
+# Total Number of model parameters: 108.03 M
+# Number of trainable parameters: 108.03 M (100.0%)
+# Size: 432.12 MB
 
 # Frontend
 frontend: asteroid_frontend
