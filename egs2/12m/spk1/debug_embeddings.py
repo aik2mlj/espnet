@@ -30,7 +30,7 @@ def debug_embeddings():
         if result:
             singer_id, file_path, embedding = result
             
-            print("🔍 RAW DATABASE CONTENT:")
+            print("RAW DATABASE CONTENT:")
             print(f"Singer ID: {singer_id}")
             print(f"File path: {file_path}")
             print(f"Embedding type: {type(embedding)}")
@@ -42,28 +42,28 @@ def debug_embeddings():
             # Try to convert to numpy array
             try:
                 if isinstance(embedding, str):
-                    print("❌ Embedding is stored as string!")
+                    print("Embedding is stored as string!")
                     print(f"First 100 chars: {embedding[:100]}")
                 elif isinstance(embedding, (list, tuple)):
-                    print("✅ Embedding is stored as list/tuple")
+                    print("Embedding is stored as list/tuple")
                     print(f"First 5 values: {embedding[:5]}")
                     print(f"Length: {len(embedding)}")
                 elif isinstance(embedding, np.ndarray):
-                    print("✅ Embedding is stored as numpy array")
+                    print("Embedding is stored as numpy array")
                     print(f"Shape: {embedding.shape}")
                     print(f"First 5 values: {embedding[:5]}")
                 else:
-                    print(f"🤔 Unknown embedding type: {type(embedding)}")
+                    print(f"Unknown embedding type: {type(embedding)}")
                     
             except Exception as e:
-                print(f"❌ Error processing embedding: {e}")
+                print(f"Error processing embedding: {e}")
         else:
-            print("❌ No data found!")
+            print("No data found!")
             
         conn.close()
         
     except Exception as e:
-        print(f"❌ Database error: {e}")
+        print(f"Database error: {e}")
 
 if __name__ == "__main__":
     debug_embeddings() 

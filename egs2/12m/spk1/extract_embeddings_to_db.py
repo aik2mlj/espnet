@@ -2,7 +2,8 @@
 """
 Custom script to extract singer embeddings using ESPNet model and store in PostgreSQL
 Optimized for multi-GPU processing with 4 A100s
-Updated to support custom table names and source column (ai/human)
+Processes each singer directory in parallel
+Supports custom table names and source column (ai/human)
 """
 
 import os

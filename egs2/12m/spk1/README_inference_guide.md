@@ -1,4 +1,4 @@
-# Speaker Embedding Extraction Guide
+# Singer Embedding Extraction from Checkpoint
 
 This document describes the workflow for extracting speaker embeddings from a RawNet3 model checkpoint and storing them in a PostgreSQL database.
 
@@ -11,14 +11,14 @@ This document describes the workflow for extracting speaker embeddings from a Ra
 - Trained RawNet3 model (`58epoch.pth`)
 current best version: MODEL_PATH="/home/sc/espnet/egs2/12m/spk1/exp/spk_train_rawnet3_raw_sp/58epoch.pth"
 
-### Expected Directory Structure
+### Expected Dataset Directory Structure
 
 ```
 /path/to/your/data/
 ├── wav/
 │   ├── id00001/
-│   │   ├── audio1.wav
-│   │   ├── audio2.wav
+│   │   ├── 00001.wav
+│   │   ├── 00002.wav
 │   │   └── ...
 │   ├── id00002/
 │   │   └── ...
@@ -29,7 +29,7 @@ current best version: MODEL_PATH="/home/sc/espnet/egs2/12m/spk1/exp/spk_train_ra
 
 ### Step 1: Start Database
 
-A `docker-compose.yml` file is provided in this directory. Start the PostgreSQL database with pgvector extension:
+You can use the `docker-compose.yml` file in this directory to start the PostgreSQL database with pgvector extension:
 
 ```bash
 docker-compose up -d
@@ -58,41 +58,6 @@ Required files:
 Edit `run_embedding_extraction.sh` to set your paths:
 
 ```bash
-#!/bin/bash
-source ~/miniconda3/etc/profile.d/conda.sh
-conda activate espnet
-
-# Edit these paths
-EXP_DIR="/path/to/your/data"
-MODEL_PATH="/home/sc/espnet/egs2/12m/spk1/exp/spk_train_rawnet3_raw_sp/58epoch.pth"
-CONFIG_PATH="/home/sc/espnet/egs2/12m/spk1/exp/spk_train_rawnet3_raw_sp/config.yaml"
-
-# Database settings
-DB_HOST="localhost"
-DB_PORT=5433
-DB_NAME="local_db"
-DB_USER="postgres"
-DB_PASSWORD="postgres"
-
-# Processing settings
-TABLE_NAME="singer_embeddings"
-SOURCE_TYPE="ai"
-NUM_GPUS=2
-
-python3 extract_embeddings_to_db.py \
-    --exp_dir "$EXP_DIR" \
-    --model_path "$MODEL_PATH" \
-    --config_path "$CONFIG_PATH" \
-    --num_gpus $NUM_GPUS \
-    --db_host $DB_HOST \
-    --db_port $DB_PORT \
-    --db_name $DB_NAME \
-    --db_user $DB_USER \
-    --db_password $DB_PASSWORD \
-    --table_name $TABLE_NAME \
-    --source $SOURCE_TYPE
-```
-
 Run with:
 ```bash
 chmod +x run_embedding_extraction.sh
@@ -105,16 +70,7 @@ chmod +x run_embedding_extraction.sh
 python query_embeddings.py --action stats --db_port 5433
 ```
 
-### View Singer Data
-```bash
-python view_data.py --action singers
-python view_data.py --action view --singer id02254 --limit 5
-```
 
-### Find Similar Singers
-```bash
-python query_embeddings.py --action similar --singer_id id02254 --top_k 10 --db_port 5433
-```
 
 ### Direct Database Access
 ```bash
